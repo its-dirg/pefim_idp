@@ -1,4 +1,4 @@
-<%inherit file="../../templates/root.mako"/>
+<%inherit file="root.mako"/>
 
 <h1>Please log in</h1>
 <p class="description">

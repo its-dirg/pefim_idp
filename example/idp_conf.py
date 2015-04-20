@@ -53,6 +53,7 @@ CONFIG = {
         },
         "idp": {
             "name": "Rolands IdP",
+            "sign_response": True,
             "endpoints": {
                 "single_sign_on_service": [
                     ("%s/sso/redirect" % BASE, BINDING_HTTP_REDIRECT),
@@ -98,7 +99,7 @@ CONFIG = {
     "key_file": full_path("pki/mykey.pem"),
     "cert_file": full_path("pki/mycert.pem"),
     "metadata": {
-        "local": [full_path("sp-wsgi/sp.xml")],
+        "local": ["/Users/haho0032/Develop/githubFork/pysaml2/example/sp-repoze/sp.xml"],
     },
     "organization": {
         "display_name": "Rolands Identiteter",

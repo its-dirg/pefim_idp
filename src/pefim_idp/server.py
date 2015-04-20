@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import argparse
 import base64
 import importlib
 import logging
@@ -7,11 +6,11 @@ import os
 import re
 import socket
 import time
-
 from Cookie import SimpleCookie
 from hashlib import sha1
 from urlparse import parse_qs
 
+import argparse
 from saml2 import BINDING_HTTP_ARTIFACT
 from saml2 import BINDING_URI
 from saml2 import BINDING_PAOS
@@ -20,7 +19,6 @@ from saml2 import BINDING_HTTP_REDIRECT
 from saml2 import BINDING_HTTP_POST
 from saml2 import server
 from saml2 import time_util
-
 from saml2.authn_context import AuthnBroker
 from saml2.authn_context import PASSWORD
 from saml2.authn_context import UNSPECIFIED
@@ -43,10 +41,12 @@ from saml2.s_utils import UnsupportedBinding
 from saml2.s_utils import PolicyError
 from saml2.sigver import verify_redirect_signature
 from saml2.sigver import encrypt_cert_from_item
-
-from idp_user import USERS
-from idp_user import EXTRA
 from mako.lookup import TemplateLookup
+import sys
+
+from pefim_idp.idp_user import USERS
+from pefim_idp.idp_user import EXTRA
+
 
 logger = logging.getLogger("saml2.idp")
 logger.setLevel(logging.WARNING)
@@ -988,7 +988,13 @@ def application(environ, start_response):
 
 # ----------------------------------------------------------------------------
 
-if __name__ == '__main__':
+
+def main():
+    global IDP
+    global AUTHN_BROKER
+    global LOOKUP
+    global args
+    sys.path.insert(0, os.getcwd())
     from wsgiref.simple_server import make_server
 
     parser = argparse.ArgumentParser()
@@ -1018,7 +1024,7 @@ if __name__ == '__main__':
     IDP.ticket = {}
 
     _rot = args.mako_root
-    LOOKUP = TemplateLookup(directories=[_rot + 'templates', _rot + 'htdocs'],
+    LOOKUP = TemplateLookup(directories=[_rot + 'htdocs', _rot + 'htdocs'],
                             module_directory=_rot + 'modules',
                             input_encoding='utf-8', output_encoding='utf-8')
 
@@ -1028,3 +1034,6 @@ if __name__ == '__main__':
     SRV = make_server(HOST, PORT, application)
     print "IdP listening on %s:%s" % (HOST, PORT)
     SRV.serve_forever()
+
+if __name__ == '__main__':
+    main()
