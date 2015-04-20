@@ -13,7 +13,7 @@ setup(
     classifiers=["Development Status :: 0.1 - Beta",
                  "License :: OSI Approved :: Apache Software License",
                  "Topic :: Software Development :: Libraries :: Python Modules"],
-    install_requires=["mako", "pysaml2"],
+    install_requires=["mako"], #, "pysaml2"
     entry_points={
         'console_scripts': ['pefim_idp=pefim_idp.server:main'],
     },
