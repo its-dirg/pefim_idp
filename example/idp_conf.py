@@ -4,6 +4,7 @@ from saml2 import BINDING_HTTP_REDIRECT, BINDING_URI
 from saml2 import BINDING_HTTP_ARTIFACT
 from saml2 import BINDING_HTTP_POST
 from saml2 import BINDING_SOAP
+from saml2.cert import OpenSSLWrapper
 from saml2.saml import NAME_FORMAT_URI
 from saml2.saml import NAMEID_FORMAT_TRANSIENT
 from saml2.saml import NAMEID_FORMAT_PERSISTENT
@@ -22,8 +23,16 @@ else:
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
 
+def verify_encrypt_cert(cert_str):
+    osw = OpenSSLWrapper()
+    ca_cert_str = osw.read_str_from_file("/Users/haho0032/Develop/root_cert/localhost.ca.crt")
+    valid, mess = osw.verify(ca_cert_str, cert_str)
+    return valid
+
+
 def full_path(local_file):
     return os.path.join(BASEDIR, local_file)
+
 
 #If HTTPS is true you have to assign the server cert, key and certificate chain.
 HTTPS = True
@@ -38,8 +47,8 @@ PORT = 8078
 BASE = "https://%s:%s" % (HOST, PORT)
 
 CONFIG = {
-    "entityid": "%s/idp.xml" % BASE,
-    "description": "My IDP",
+    "entityid": "%s/TestIdP.xml" % BASE,
+    "description": "TestIDP",
     "valid_for": 168,
     "service": {
         "aa": {
@@ -59,8 +68,13 @@ CONFIG = {
             },
         },
         "idp": {
-            "name": "Rolands IdP",
+            "name": "TestIdP",
+            "want_authn_requests_signed": True,
+            "want_authn_requests_only_with_valid_cert": True,
             "sign_response": True,
+            "sign_assertion": False,
+            "verify_encrypt_cert": verify_encrypt_cert,
+            "encrypt_assertion": True,
             "endpoints": {
                 "single_sign_on_service": [
                     ("%s/sso/redirect" % BASE, BINDING_HTTP_REDIRECT),
@@ -92,9 +106,9 @@ CONFIG = {
             "policy": {
                 "default": {
                     "lifetime": {"minutes": 15},
-                    "attribute_restrictions": None, # means all I have
+                    #"attribute_restrictions": None, # means all I have
                     "name_form": NAME_FORMAT_URI,
-                    "entity_categories": ["swamid", "edugain"]
+                    "entity_categories": ["at_egov_pvp2"]
                 },
             },
             "subject_data": "./idp.subject",
@@ -106,26 +120,23 @@ CONFIG = {
     "key_file": full_path("pki/mykey.pem"),
     "cert_file": full_path("pki/mycert.pem"),
     "metadata": {
-        "local": ["/Users/haho0032/Develop/githubFork/pysaml2/example/sp-repoze/sp.xml"],
+        "local": ["/Users/haho0032/Develop/githubFork/pysaml2/example/sp-repoze/sp.xml",
+                  "/Users/haho0032/Develop/github/pefim-proxy/example/pefim_proxy_conf.xml"],
     },
     "organization": {
-        "display_name": "Rolands Identiteter",
-        "name": "Rolands Identiteter",
-        "url": "http://www.example.com",
+        "display_name": "Test IdP",
+        "name": "Test IdP",
+        "url": "http://localhost:8737",
     },
     "contact_person": [
         {
             "contact_type": "technical",
-            "given_name": "Roland",
-            "sur_name": "Hedberg",
-            "email_address": "technical@example.com"
-        }, {
-            "contact_type": "support",
-            "given_name": "Support",
-            "email_address": "support@example.com"
+            "given_name": "Test",
+            "sur_name": "Testsson",
+            "email_address": "test.testssong@test.se"
         },
     ],
-    # This database holds the map between a subject's local identifier and
+    # This database holds the map between a subjects local identifier and
     # the identifier returned to a SP
     "xmlsec_binary": xmlsec_path,
     #"attribute_map_dir": "../attributemaps",
@@ -137,17 +148,4 @@ CONFIG = {
         },
         "loglevel": "debug",
     }
-}
-
-# Authentication contexts
-
-    #(r'verify?(.*)$', do_verify),
-
-CAS_SERVER = "https://cas.umu.se"
-CAS_VERIFY = "%s/verify_cas" % BASE
-PWD_VERIFY = "%s/verify_pwd" % BASE
-
-AUTHORIZATION = {
-    "CAS" : {"ACR": "CAS", "WEIGHT": 1, "URL": CAS_VERIFY},
-    "UserPassword" : {"ACR": "PASSWORD", "WEIGHT": 2, "URL": PWD_VERIFY}
 }
