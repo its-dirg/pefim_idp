@@ -50,10 +50,6 @@ import sys
 
 from mako.lookup import TemplateLookup
 
-PASSWD = None
-USERS = None
-EXTRA = None
-
 logger = logging.getLogger("saml2.idp")
 logger.setLevel(logging.WARNING)
 
@@ -1029,6 +1025,9 @@ def main():
     global LOOKUP
     global args
     global CONFIG
+    global USERS
+    global PASSWD
+    global EXTRA
     sys.path.insert(0, os.getcwd())
     from wsgiref.simple_server import make_server
 
