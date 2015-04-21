@@ -11,8 +11,6 @@ from hashlib import sha1
 from urlparse import parse_qs
 
 import argparse
-from cherrypy import wsgiserver
-from cherrypy.wsgiserver import ssl_pyopenssl
 from saml2 import BINDING_HTTP_ARTIFACT
 from saml2 import BINDING_URI
 from saml2 import BINDING_PAOS
@@ -1026,27 +1024,16 @@ def main():
     IDP.ticket = {}
 
     _rot = args.mako_root
-    LOOKUP = TemplateLookup(directories=[_rot + 'htdocs', _rot + 'htdocs'],
+    LOOKUP = TemplateLookup(directories=[_rot + 'templates', _rot + 'htdocs'],
                             module_directory=_rot + 'modules',
                             input_encoding='utf-8', output_encoding='utf-8')
 
     HOST = CONFIG.HOST
     PORT = CONFIG.PORT
 
-    #SRV = make_server(HOST, PORT, application)
-
-    SRV = wsgiserver.CherryPyWSGIServer(('0.0.0.0', PORT), application)
-    make_server
-
-    if CONFIG.HTTPS:
-        SRV.ssl_adapter = ssl_pyopenssl.pyOpenSSLAdapter(CONFIG.SERVER_CERT, CONFIG.SERVER_KEY,
-                                                         CONFIG.CERT_CHAIN)
-
+    SRV = make_server(HOST, PORT, application)
     print "IdP listening on %s:%s" % (HOST, PORT)
-    try:
-        SRV.start()
-    except KeyboardInterrupt:
-        SRV.stop()
+    SRV.serve_forever()
 
 if __name__ == '__main__':
     main()

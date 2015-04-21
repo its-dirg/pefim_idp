@@ -1,0 +1,3 @@
+[console_scripts]
+pefim_idp = pefim_idp.server:main
+
