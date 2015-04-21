@@ -48,9 +48,11 @@ from saml2.sigver import verify_redirect_signature
 from saml2.sigver import encrypt_cert_from_item
 import sys
 
-from idp_user import USERS
-from idp_user import EXTRA
 from mako.lookup import TemplateLookup
+
+PASSWD = None
+USERS = None
+EXTRA = None
 
 logger = logging.getLogger("saml2.idp")
 logger.setLevel(logging.WARNING)
@@ -517,10 +519,6 @@ def do_authentication(environ, start_response, authn_context, key,
 
 
 # -----------------------------------------------------------------------------
-
-PASSWD = {
-    "testuser": "qwerty",
-}
 
 
 def username_password_authn(environ, start_response, reference, key,
@@ -1030,6 +1028,7 @@ def main():
     global AUTHN_BROKER
     global LOOKUP
     global args
+    global CONFIG
     sys.path.insert(0, os.getcwd())
     from wsgiref.simple_server import make_server
 
@@ -1056,6 +1055,11 @@ def main():
     AUTHN_BROKER.add(authn_context_class_ref(UNSPECIFIED),
                      "", 0, "http://%s" % socket.gethostname())
     CONFIG = importlib.import_module(args.config)
+
+    USERS = CONFIG.USERS
+    PASSWD = CONFIG.PASSWD
+    EXTRA = CONFIG.EXTRA
+
     IDP = server.Server(args.config, cache=Cache())
     IDP.ticket = {}
 
