@@ -25,6 +25,13 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 def full_path(local_file):
     return os.path.join(BASEDIR, local_file)
 
+#If HTTPS is true you have to assign the server cert, key and certificate chain.
+HTTPS = False
+SERVER_CERT = "httpsCert/localhost.crt"
+SERVER_KEY = "httpsCert/localhost.key"
+#CERT_CHAIN="certs/chain.pem"
+CERT_CHAIN = None
+
 HOST = 'localhost'
 PORT = 8088
 

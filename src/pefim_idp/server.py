@@ -11,6 +11,7 @@ from hashlib import sha1
 from urlparse import parse_qs
 
 import argparse
+from cherrypy.wsgiserver import ssl_pyopenssl
 from saml2 import BINDING_HTTP_ARTIFACT
 from saml2 import BINDING_URI
 from saml2 import BINDING_PAOS
@@ -1032,6 +1033,11 @@ def main():
     PORT = CONFIG.PORT
 
     SRV = make_server(HOST, PORT, application)
+
+    if CONFIG.HTTPS:
+        SRV.ssl_adapter = ssl_pyopenssl.pyOpenSSLAdapter(CONFIG.SERVER_CERT, CONFIG.SERVER_KEY,
+                                                         CONFIG.CERT_CHAIN)
+
     print "IdP listening on %s:%s" % (HOST, PORT)
     SRV.serve_forever()
 
