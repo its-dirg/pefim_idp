@@ -26,16 +26,16 @@ def full_path(local_file):
     return os.path.join(BASEDIR, local_file)
 
 #If HTTPS is true you have to assign the server cert, key and certificate chain.
-HTTPS = False
+HTTPS = True
 SERVER_CERT = "httpsCert/localhost.crt"
 SERVER_KEY = "httpsCert/localhost.key"
 #CERT_CHAIN="certs/chain.pem"
 CERT_CHAIN = None
 
 HOST = 'localhost'
-PORT = 8088
+PORT = 8078
 
-BASE = "http://%s:%s" % (HOST, PORT)
+BASE = "https://%s:%s" % (HOST, PORT)
 
 CONFIG = {
     "entityid": "%s/idp.xml" % BASE,
