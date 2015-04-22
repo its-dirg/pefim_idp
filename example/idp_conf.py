@@ -25,7 +25,7 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
 def verify_encrypt_cert(cert_str):
     osw = OpenSSLWrapper()
-    ca_cert_str = osw.read_str_from_file("/Users/haho0032/Develop/root_cert/localhost.ca.crt")
+    ca_cert_str = osw.read_str_from_file("root_cert/localhost.ca.crt")
     valid, mess = osw.verify(ca_cert_str, cert_str)
     return valid
 
