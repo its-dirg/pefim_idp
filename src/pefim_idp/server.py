@@ -9,7 +9,7 @@ import socket
 import time
 
 from Cookie import SimpleCookie
-from hashlib import sha1
+from hashlib import sha1, sha256
 from urlparse import parse_qs
 from cherrypy import wsgiserver
 from cherrypy.wsgiserver import ssl_pyopenssl
@@ -58,6 +58,7 @@ class Cache(object):
     def __init__(self):
         self.user2uid = {}
         self.uid2user = {}
+        self.hash2user = {}
 
 
 def _expiration(timeout, tformat="%a, %d-%b-%Y %H:%M:%S GMT"):
@@ -319,7 +320,7 @@ class SSO(Service):
             return resp(self.environ, self.start_response)
 
         if not _resp:
-            identity = USERS[self.user].copy()
+            identity = USERS[IDP.cache.hash2user[self.user]].copy()
             # identity["eduPersonTargetedID"] = get_eptid(IDP, query, session)
             logger.info("Identity: %s" % (identity,))
 
@@ -546,7 +547,9 @@ def verify_username_and_password(dic):
     global PASSWD
     # verify username and password
     if PASSWD[dic["login"][0]] == dic["password"][0]:
-        return True, dic["login"][0]
+        user = sha256(dic["login"][0]).hexdigest()
+        IDP.cache.hash2user[user] = dic["login"][0]
+        return True, user
     else:
         return False, ""
 

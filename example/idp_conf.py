@@ -120,8 +120,7 @@ CONFIG = {
     "key_file": full_path("pki/mykey.pem"),
     "cert_file": full_path("pki/mycert.pem"),
     "metadata": {
-        "local": ["/Users/haho0032/Develop/githubFork/pysaml2/example/sp-repoze/sp.xml",
-                  "/Users/haho0032/Develop/github/pefim-proxy/example/pefim_proxy_conf.xml"],
+        "local": ["/Users/haho0032/Develop/github/pefim-proxy/example/pefim_proxy_conf.xml"],
     },
     "organization": {
         "display_name": "Test IdP",
